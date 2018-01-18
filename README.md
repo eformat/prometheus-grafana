@@ -8,6 +8,8 @@ The origin documentation gives more details on installation - for example as a s
 
 This repository contains OpenShift template copies (some with slight modfiications as noted) so the install can be run offline if required.
 
+We end up with a - Grafana + Wizzy + Promtheus + Node Exporter design.
+
 ### Prometheus for Cluster/Operations Setup
 
 Prometheus can be installed into an OpenShift cluster using an ansible playbook as per the OpenShift product documentation. It consists of:
@@ -326,5 +328,4 @@ All templates and configuration for the examples above are contained in this rep
 - HOSA (Hawkular OpenShift Agent) -  supports the collection of application metrics within an OpenShift cluster from prometheus endpoints: http://www.hawkular.org/blog/2017/03/25/collecting-application-metrics-openshift.html
 - OAUTH (prometheus, grafana) should seamlessly integrate into OpenShift OUATH provider endpoint without error
 - Proetheus Scrape is HTTP within the namespace - configurable for HTTPS
-- Grafana + Wizzy + Promtheus + Node Exporter
 - Intel SNAP connectors for Grafana application: https://github.com/waynedovey/openshift-prometheus/tree/master/grafana-kubernetes-app, http://snap-telemetry.io/
