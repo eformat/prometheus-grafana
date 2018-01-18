@@ -2,3 +2,5 @@ conf/
 .idea/
 prometheus-grafana.iml
 *~
+temp/
+clips/

@@ -314,6 +314,9 @@ Output:
 
 Use `wizzy help` on CLI to find out other useful commands.
 
+![](images/grafana1.png)
+![](images/grafana2.png)
+
 ### Offline Installation
 
 Pull down all images listed and import them into your own image registry and adjust the image names appropriately when running the templates. 
@@ -330,3 +333,7 @@ All templates and configuration for the examples above are contained in this rep
 - Intel SNAP connectors for Grafana application: https://github.com/waynedovey/openshift-prometheus/tree/master/grafana-kubernetes-app, http://snap-telemetry.io/
 - Alerting not configured (Promehteus/Grafana)
 - HOSA (Hawkular OpenShift Agent) - supports the collection of application metrics within an OpenShift cluster from prometheus endpoints: http://www.hawkular.org/blog/2017/03/25/collecting-application-metrics-openshift.html
+- Wizzy image clips of dashboards not working as Grafana image missing: 
+```
+/root/go/src/github.com/grafana/grafana/vendor/phantomjs/phantomjs: error while loading shared libraries: libfontconfig.so.1: cannot open shared object file: No such file or directory
+```
