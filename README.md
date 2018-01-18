@@ -322,10 +322,11 @@ Wizyy - npm install wizzy locally, tar up the gzip node_modules directory.
 
 All templates and configuration for the examples above are contained in this repo.
 
-### Further Considerations
+### Further Considerations / Issues
 
-- Storage longer term for metrics (e.g. hawkular, influxdb, PV/PVC for prometheus)
-- HOSA (Hawkular OpenShift Agent) -  supports the collection of application metrics within an OpenShift cluster from prometheus endpoints: http://www.hawkular.org/blog/2017/03/25/collecting-application-metrics-openshift.html
-- OAUTH (prometheus, grafana) should seamlessly integrate into OpenShift OUATH provider endpoint without error
-- Proetheus Scrape is HTTP within the namespace - configurable for HTTPS
+- Storage longer term for metrics (e.g. hawkular, influxdb, PV/PVC for prometheus, others...)
+- OAUTH (prometheus, grafana) issues - these should seamlessly integrate into OpenShift OUATH provider endpoint
+- Prometheus Scrape is HTTP within the namespace - configurable for HTTPS
 - Intel SNAP connectors for Grafana application: https://github.com/waynedovey/openshift-prometheus/tree/master/grafana-kubernetes-app, http://snap-telemetry.io/
+- Alerting not configured (Promehteus/Grafana)
+- HOSA (Hawkular OpenShift Agent) - supports the collection of application metrics within an OpenShift cluster from prometheus endpoints: http://www.hawkular.org/blog/2017/03/25/collecting-application-metrics-openshift.html
