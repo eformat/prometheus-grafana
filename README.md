@@ -233,6 +233,9 @@ Import the grafana dashboard
 name: RabbitMQ Metrics
 prometheus data source: prometheus-rabbitmq
 json file: https://raw.githubusercontent.com/eformat/prometheus-grafana/master/rabbitmq-metrics_rev1.json
+
+OR use local file
+./rabbitmq-metrics_rev1.json
 ```
 
 All going well you should now see metrics dashboard for RabbitMQ showing Node Stats, Exchanges, Channels, Consumers, Connections, Queues, Messages, Messages per Queue, Memory, File Descriptors, Sockets.
@@ -294,7 +297,7 @@ mkdir orgs
 wizzy import orgs
 ```
 
-If we reinstall the grfana pod from scratch, we can now use Wizzy to setup Grafana:
+If we reinstall the grfana pod from scratch, we can now use Wizzy to setup Grafana (these are checked into this repo)
 
 ```
 wizzy export datasources
