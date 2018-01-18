@@ -200,6 +200,10 @@ Grafana dashboard is not yet part of OpenShift and is a work in progress. There 
 
 ```
 wget https://raw.githubusercontent.com/openshift/origin/master/examples/grafana/grafana-ocp.yaml -O grafana-ocp.yaml
+
+-- OR use the version in this repo: 
+
+./grfana-ocp.yaml
 ```
 
 This is based in the image `mrsiano/grafana-ocp:latest` - https://github.com/mrsiano/grafana-ocp
