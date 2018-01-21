@@ -143,7 +143,7 @@ wget https://raw.githubusercontent.com/prometheus/alertmanager/master/doc/exampl
 ./alertmanager.yml
 ```
 
-Create a project (`prometheus.yaml` config references this name `rabbitmq` so change the config if you use a different name)
+Create a project:
 
 ```
 oc new-project rabbitmq --display-name='RabbitMQ' --description='RabbitMQ'
@@ -156,16 +156,50 @@ oc create secret generic prom --from-file=./prometheus.yml
 oc create secret generic prom-alerts --from-file=./alertmanager.yml
 ```
 
+Allow the `prom` service account to view our namespace
+
+```
+oc policy add-role-to-user view system:serviceaccount:$(oc project -q):prom
+```
+
 Create the standalone prometheus instance in our namespace:
 
 ```
 oc process -f prometheus-standalone.yaml | oc apply -f -
 ```
 
-Allow the `prom` service account to view our namespace
+(Optional) Add persistent storage separately if you want your dashboards to survive a pod restart. `Note:` Your PersistenVolumeClaim may differ if you are using storage classes:
 
 ```
-oc policy add-role-to-user view system:serviceaccount:$(oc project -q):prom
+oc create -n rabbitmq -f - <<EOF
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: prometheus-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+
+oc volume statefulsets/prom --add --overwrite -t persistentVolumeClaim --claim-name=prometheus-data --name=prometheus-data --mount-path=/prometheus
+
+oc create -n rabbitmq -f - <<EOF
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: alertmanager-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+
+oc volume statefulsets/prom --add --overwrite -t persistentVolumeClaim --claim-name=alertmanager-data --name=alertmanager-data --mount-path=/alertmanager
 ```
 
 ### RabbitMQ Application Example using Standalone Prometheus
@@ -196,14 +230,16 @@ You should now be able to see rabbitmq scraped data in prometheus.
 
 ### Grafana Dashboarding
 
-Grafana dashboard is not yet part of OpenShift and is a work in progress. There has been recent work to include grafana as an example in upstream origin. We can make use of this example work. Grab the template:
+Grafana dashboard is not yet part of OpenShift and is a work in progress. There has been recent work to include grafana as an example in upstream origin. We can make use of this example work. 
+
+The original template has been enhanced to include a DeploymentConfig - use the version in this repo if you want to add persistent storage to your grafana instance:
 
 ```
+-- Original template
 wget https://raw.githubusercontent.com/openshift/origin/master/examples/grafana/grafana-ocp.yaml -O grafana-ocp.yaml
 
 -- OR use the version in this repo: 
-
-./grfana-ocp.yaml
+./grafana-ocp.yaml
 ```
 
 This is based in the image `mrsiano/grafana-ocp:latest` - https://github.com/mrsiano/grafana-ocp
@@ -216,7 +252,26 @@ Create grafana in our rabbitmq namespace:
 oc new-app -f grafana-ocp.yaml -p NAMESPACE=$(oc project -q)
 ```
 
-We can login to grafana using `admin\admin` for now. OpenShift OAUTH support is coming by the looks of it - there is a new template 'grafana-ocp-oauth.yaml' - https://github.com/openshift/origin/pull/17114/files (not merged upstream yet)
+We can login to grafana using `admin/admin` for now. OpenShift OAUTH support is coming by the looks of it - there is a new template 'grafana-ocp-oauth.yaml' - https://github.com/openshift/origin/pull/17114/files (not merged upstream yet based on: https://github.com/mrsiano/grafana-ocp/blob/master/grafana-ocp-oauth.yaml)
+
+(Optional) Add persistent storage separately if you want your dashboards to survive a pod restart. `Note:` Your PersistenVolumeClaim may differ if you are using storage classes:
+
+```
+oc create -n rabbitmq -f - <<EOF
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: grafana-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+
+oc volume dc/grafana-ocp --add --overwrite -t persistentVolumeClaim --claim-name=grafana-data --name=data --mount-path=/root/go/src/github.com/grafana/grafana/data
+```
 
 Setup a datasource from Grafana UI manually by pointing to prometheus:
 
@@ -227,7 +282,7 @@ url: https://prom.rabbitmq.svc.cluster.local:443
 access: direct
 ```
 
-Import the grafana dashboard
+Import the grafana dashboard:
 
 ```
 name: RabbitMQ Metrics
@@ -304,7 +359,7 @@ wizzy export datasources
 wizzy export dashboards
 ```
 
-Check
+Check:
 
 ```
 $ wizzy list dashboards

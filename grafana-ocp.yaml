@@ -17,7 +17,7 @@ parameters:
   name: NAMESPACE
   value: grafana
 objects:
-- apiVersion: route.openshift.io/v1
+- apiVersion: v1
   kind: Route
   metadata:
     name: grafana-ocp
@@ -29,42 +29,50 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: grafana-ocp
-    namespace: "${NAMESPACE}"
+    creationTimestamp: null
     labels:
-      metrics-infra: grafana-ocp
-      name: grafana-ocp
+      app: grafana-ocp
+    name: grafana-ocp
   spec:
-    selector:
-      name: grafana-ocp
     ports:
-    - port: 8082
+    - port: 3000
       protocol: TCP
-      targetPort: grafana-http
-- apiVersion: v1
-  kind: ReplicationController
-  metadata:
-    name: grafana-ocp
-    namespace: "${NAMESPACE}"
-    labels:
-      metrics-infra: grafana-ocp
-      name: grafana-ocp
-  spec:
+      targetPort: 3000
     selector:
-      name: grafana-ocp
+      app: grafana-ocp
+      deploymentconfig: grafana-ocp
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: grafana-ocp
+    name: grafana-ocp
+  spec:
     replicas: 1
+    selector:
+      app: grafana-ocp
+      deploymentconfig: grafana-ocp
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
     template:
-      version: v1
       metadata:
+        creationTimestamp: null
         labels:
-          metrics-infra: grafana-ocp
-          name: grafana-ocp
+          app: grafana-ocp
+          deploymentconfig: grafana-ocp
       spec:
-        volumes:
-        - name: data
-          emptyDir: {}
         containers:
         - image: "mrsiano/grafana-ocp:latest"
+          imagePullPolicy: Always
           name: grafana-ocp
           ports:
           - name: grafana-http
@@ -74,3 +82,30 @@ objects:
             mountPath: "/root/go/src/github.com/grafana/grafana/data"
           command:
           - "./bin/grafana-server"
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 3000
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+              - echo
+              - ok
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: data
+          emptyDir: {}
