@@ -119,7 +119,7 @@ objects:
           - -cookie-secret-file=/etc/proxy/secrets/session_secret
           - -skip-auth-regex=^/metrics
           - -skip-auth-regex=/
-          - -ssl-insecure-skip-verify=true          
+          - -ssl-insecure-skip-verify=true
           volumeMounts:
           - mountPath: /etc/tls/private
             name: prometheus-tls
@@ -170,7 +170,7 @@ objects:
           - -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
           - -cookie-secret-file=/etc/proxy/secrets/session_secret
           - -skip-auth-regex=/
-          - -ssl-insecure-skip-verify=true          
+          - -ssl-insecure-skip-verify=true
           volumeMounts:
           - mountPath: /etc/tls/private
             name: alerts-tls
