@@ -42,7 +42,7 @@ OR from this repo:
           - -skip-auth-regex=/
           - -ssl-insecure-skip-verify=true
 ```
-Use these mods only in a lab type environment if you cannot login using the OpenShift OAUTH provider as setup in the template (there seemed to be issues with OAUTH and self signed certificates when i tried this)
+Use this only in a lab type environment (oc cluster up) if you cannot login using the OpenShift OAUTH provider as setup in the template. In a normal OpenShift cluster this works without modification for OAUTH.
 
 Create a new project for prometheus (the default is kube-system)
 
@@ -116,7 +116,7 @@ Creates a Prometheus instance without any configuration, intended for use when y
           - -skip-auth-regex=/
           - -ssl-insecure-skip-verify=true
 ```
-Use this only in a lab type environment if you cannot login using the OpenShift OAUTH provider as setup in the template (these seemed to have issues with OAUTH and self signed certificates when i tried this)
+Use this only in a lab type environment (oc cluster up) if you cannot login using the OpenShift OAUTH provider as setup in the template. In a normal OpenShift cluster this works without modification for OAUTH.
 
 We need to create two secrets containg the prometheus and alertmanager configuration files.
 
